@@ -142,9 +142,9 @@ public class BLEAdvertiserModule extends ReactContextBaseJavaModule {
         BluetoothLeAdvertiser tempAdvertiser;
         AdvertiseCallback tempCallback;
 
-        if (mAdvertiserList.containsKey(uid)) {
-            tempAdvertiser = mAdvertiserList.remove(uid);
-            tempCallback = mAdvertiserCallbackList.remove(uid);
+        if (mAdvertiserList.containsKey(uid != null ? uid : "null")) {
+            tempAdvertiser = mAdvertiserList.remove(uid != null ? uid : "null");
+            tempCallback = mAdvertiserCallbackList.remove(uid != null ? uid : "null");
 
             tempAdvertiser.stopAdvertising(tempCallback);
         } else {
@@ -159,12 +159,12 @@ public class BLEAdvertiserModule extends ReactContextBaseJavaModule {
         }
         
         AdvertiseSettings settings = buildAdvertiseSettings(options);
-        AdvertiseData data = buildAdvertiseData(ParcelUuid.fromString(uid), toByteArray(payload), options);
+        AdvertiseData data = buildAdvertiseData(uid != null ? ParcelUuid.fromString(uid) : null, toByteArray(payload), options);
 
         tempAdvertiser.startAdvertising(settings, data, tempCallback);
 
-        mAdvertiserList.put(uid, tempAdvertiser);
-        mAdvertiserCallbackList.put(uid, tempCallback);
+        mAdvertiserList.put(uid != null ? uid : "null", tempAdvertiser);
+        mAdvertiserCallbackList.put(uid != null ? uid : "null", tempCallback);
     }
 
     private byte[] toByteArray(ReadableArray payload) {
@@ -455,7 +455,9 @@ public class BLEAdvertiserModule extends ReactContextBaseJavaModule {
             dataBuilder.setIncludeTxPowerLevel(options.getBoolean("includeTxPowerLevel"));
         
         dataBuilder.addManufacturerData(companyId, payload);
-        dataBuilder.addServiceUuid(uuid);
+        if (uuid != null) {
+            dataBuilder.addServiceUuid(uuid);
+        }
         return dataBuilder.build();
     }
 
