@@ -114,7 +114,7 @@ public class BLEAdvertiserModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void broadcast(String uid, ReadableArray payload, ReadableMap options, Promise promise) {
+    public void broadcast(String uid, ReadableArray payload, String localName, ReadableMap options, Promise promise) {
         if (mBluetoothAdapter == null) {
             Log.w("BLEAdvertiserModule", "Device does not support Bluetooth. Adapter is Null");
             promise.reject("Device does not support Bluetooth. Adapter is Null");
@@ -157,9 +157,13 @@ public class BLEAdvertiserModule extends ReactContextBaseJavaModule {
             promise.reject("Advertiser unavailable on this device");
             return;
         }
-        
+
         AdvertiseSettings settings = buildAdvertiseSettings(options);
         AdvertiseData data = buildAdvertiseData(uid != null ? ParcelUuid.fromString(uid) : null, toByteArray(payload), options);
+
+        if(localName != null) {
+            mBluetoothAdapter.setName(localName);
+        }
 
         tempAdvertiser.startAdvertising(settings, data, tempCallback);
 
